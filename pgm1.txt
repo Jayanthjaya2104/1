@@ -1,56 +1,62 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-struct calender_day
+#define INF 999
+#define MAX 100
+int p[MAX],c[MAX][MAX],t[MAX][2];
+int find(int v)
 {
- char* dayname;
- int date;
- char* activity;
-};
-void create(struct calender_day calender[7])
-{
- int i;
- for(i=0;i<7;i++)
- {
-calender[i].dayname=(char*)malloc(20);
-calender[i].activity=(char*)malloc(100);
- }
+    while(p[v])
+    v=p[v];
+    return v;
 }
-void read(struct calender_day calender[7])
+void union1(int i,int j)
 {
- int i;
- for(i=0;i<7;i++)
- {
-printf("Enter the name of the day %d:",i+1);
-scanf("%s",calender[i].dayname);
-printf("Enter the date of the day:");
-scanf("%d",&calender[i].date);
-printf("Enter the activity for the day:");
-scanf("%s",calender[i].activity);
- }
+    p[j]=i;
 }
-void display(struct calender_day calender[7])
+void kruskal(int n)
 {
- int i;
-printf("Activity details for the week:\n");
- for(i=0;i<7;i++)
- {
-printf("Dayname:%s\t",calender[i].dayname);
-printf("Date:%d\t",calender[i].date);
-printf("Activity:%s\n",calender[i].activity);
- }
+    int i,j,k,u,v,min,res1,res2,sum=0;
+    for(k=1;k<n;k++)
+    {
+        min=INF;
+        for(i=1;i<n-1;i++)
+        {
+            for(j=1;j<=n;j++)
+            {
+                if(i==j) continue;
+                if(c[i][j]<min)
+                {
+                    u=find(i);
+                    v=find(j);
+                    if(u!=v)
+                    {
+                        res1=i;
+                        res2=j;
+                        min=c[i][j];
+                    }
+                }
+            }
+        }
+        union1(res1,find(res2));
+        t[k][1]=res1;
+        t[k][2]=res2;
+        sum=sum+min;
+    }
+    printf("\nCost of spanning tree is=%d",sum);
+    printf("\nEdges of spanning tree are:\n");
+    for(i=1;i<n;i++)
+    printf("d->%d\n",t[i][1],t[i][2]);
 }
 int main()
 {
- int i;
- struct calender_day calender[7];
- create(calender);
-read(calender);
- display(calender);
- for(i=0;i<7;i++)
- {
- free(calender[i].dayname);
- free(calender[i].activity);
- }
- return 0;
+    int i,j,n;
+    printf("nEnter the n value:");
+    scanf("%d",&n);
+    for(i=1;i<=n;i++)
+    p[i]=0;
+    printf("\nEnter the graph data:\n");
+    for(i=1;i<=n;i++)
+    for(j=1;j<=n;j++)
+    scanf("%d",&c[i][j]);
+    kruskal(n);
+    return 0;
 }
